@@ -1,0 +1,9 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+  <file>appicon.png</file>
+  <file>icons/media-playback-pause.png</file>
+  <file>icons/media-playback-start.png</file>
+  <file>icons/media-playback-stop.png</file>
+  <file>icons/media-playlist-repeat.png</file>
+</qresource>
+</RCC>

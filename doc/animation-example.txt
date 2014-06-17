@@ -1,0 +1,60 @@
+PMDSIM ANIMATION VERSION 2
+# The first line must not be changed. Future versions of this file format
+# might increase the version number.
+
+# Empty lines and comment lines are ignored.
+# Each other lines defines one keyframe, using the following 4 parameters:
+# t pos rot_type rot
+# 1. 't' is the time of the key frame, in seconds.
+# 2. 'pos' defines the position of the target origin relative to the camera.
+#    Note that the camera looks along the negative z axis!
+#    - cart(x, y, z)
+#      defines cartesian coordinates
+#    - cyl(r, phi, y)
+#      defines cylindrical coordinates; phi = 0 is the negative z axis
+#    - sph(r, phi, theta)
+#      defines spherical coordinates; phi = 0 and theta = 0 is the neg. z axis
+# 3. 'rot_type' is the type of rotation.
+#    - abs_rot: the given rotation is absolute
+#    - camrel_rot: the given rotation is relative to the rotation that
+#      makes the target face the camera from its given position.
+# 4. 'rot' is the rotation of the target.
+#    - angle_axis(angle, axis_x, axis_y, axis_z)
+#      defines a rotation of <angle> degrees around the given axis
+#    - oldnew(old_x, old_y, old_z, new_x, new_y, new_z)
+#      defines a rotation that rotates the old point into the new point
+
+
+#
+# Example 1: simple positions and absolute rotations
+#
+
+# Time 0s: the target is directly in front of the camera, at 50cm distance,
+#          and it is not rotated:
+0.0	cart( 0.0, 0.0, -0.5)	abs_rot angle_axis(0, 0, 0, 0)
+
+# Time 1s: the target moved left and rotated around the y axis by 90 degrees.
+1.0	cart(-0.4, 0.0, -0.5)	abs_rot angle_axis(90, 0, 1, 0)
+
+# Time 2.5s: the target moved right and rotated around the x axis by 90 degrees.
+2.5	cart(+0.4, 0.0, -0.5)	abs_rot angle_axis(90, 1, 0, 0)
+
+# Time 5s: the target moved back to the center, and rotated some more.
+5.0	cart( 0.0, 0.0, -0.5)	abs_rot angle_axis(137, 1, 1, 1)
+
+
+#
+# Example 2: cylindrical coordinates, camera-facing target
+#
+
+# Time 6s: target in front of the camera, 50cm distance, no rotation
+6.0     cyl(0.5, 0.0, 0.0)	camrel_rot angle_axis(0, 0, 0, 0)
+
+# Time 7s: target moved left, but keeps same distance and still faces camera
+7.0	cyl(0.5, 45.0, 0.0)	camrel_rot angle_axis(0, 0, 0, 0)
+
+# Time 8s: target moved right, but still keeps distances and faces camera
+8.0	cyl(0.5, -45.0, 0.0)	camrel_rot angle_axis(0, 0, 0, 0)
+
+# Time 9s: target stayed in position, but rotated around its z axis
+9.0	cyl(0.5, -45.0, 0.0)    camrel_rot angle_axis(45, 0, 0, 1)
