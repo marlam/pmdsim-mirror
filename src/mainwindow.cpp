@@ -540,7 +540,7 @@ static std::string export_worker(const std::string& filename, const Simulator& s
         } else {
             hdr.set_components(gta::float32);
         }
-        hdr.set_compression(gta::xz);
+        hdr.set_compression(gta::zlib);
         hdr.write_to(f);
         gta::io_state ios;
 #endif
