@@ -32,7 +32,7 @@ private:
     GLuint _simple_prg;
     std::string _simple_prg_current_table;
     GLuint _simple_prg_table;
-    void render_oversampled_map(const std::vector<TrianglePatch>& scene, int phase_index);
+    void render_oversampled_map(int scene_id, const std::vector<TrianglePatch>& scene, int phase_index);
 
     GLuint _reduction_prg;
     int _map_width, _map_height;
@@ -54,7 +54,7 @@ public:
     GLuint get_phase(int index) const;
     GLuint get_result() const;
 
-    void render_map(const std::vector<TrianglePatch>& scene, int phase_index);
+    void render_map(int scene_id, const std::vector<TrianglePatch>& scene, int phase_index);
     void simulate_phase_img(int phase_index, int exposure_time_sample_index);
     void simulate_result();
 };

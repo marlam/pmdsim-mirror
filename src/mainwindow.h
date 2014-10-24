@@ -41,6 +41,7 @@ private:
     Target _target;
     Animation _animation;
 
+    int _scene_id;
     std::vector<TrianglePatch> _scene;
     SimWidget* _sim_widget;
     OSGWidget* _osg_widget;

@@ -96,6 +96,7 @@ MainWindow::MainWindow(
     }
 
     // Create widgets
+    _scene_id = 0;
     QGLFormat fmt(QGL::DoubleBuffer | QGL::DepthBuffer | QGL::Rgba | QGL::DirectRendering
             | QGL::NoSampleBuffers | QGL::NoAlphaChannel | QGL::NoAccumBuffer
             | QGL::NoStencilBuffer | QGL::NoStereoBuffers | QGL::NoOverlay | QGL::NoSampleBuffers);
@@ -417,7 +418,7 @@ void MainWindow::simulation_step()
                 _osg_widget->capture_scene(&_scene);
             else
                 _osg_widget->update_scene(&_scene);
-            _sim_widget->render_map(_scene, i);
+            _sim_widget->render_map(_scene_id, _scene, i);
             // Compute a phase image time step from the reduced map
             _sim_widget->simulate_phase_img(i, j);
             // Let time pass in free interaction mode.
@@ -456,6 +457,7 @@ void MainWindow::simulation_step()
 void MainWindow::reset_scene()
 {
     _scene.clear();
+    _scene_id++;
 }
 
 void MainWindow::animation_state_changed()

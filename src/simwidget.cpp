@@ -108,7 +108,7 @@ void render_one_to_one(float tl = 0.0f, float tr = 1.0f)
     glEnd();
 }
 
-void SimWidget::render_oversampled_map(const std::vector<TrianglePatch>& scene, int phase_index)
+void SimWidget::render_oversampled_map(int scene_id, const std::vector<TrianglePatch>& scene, int phase_index)
 {
     if (_simple_prg == 0) {
         GLuint vshader = xglCompileShader(GL_VERTEX_SHADER, RENDER_SIMPLE_VS_GLSL_STR, XGL_HERE);
@@ -175,6 +175,66 @@ void SimWidget::render_oversampled_map(const std::vector<TrianglePatch>& scene, 
 
     assert(xglCheckError(XGL_HERE));
 
+    // Cache the scene data on the GPU
+    static int scene_on_gpu_id = -1;
+    static std::vector<unsigned int> tp_buf_vertex;
+    static std::vector<unsigned int> tp_buf_normal;
+    static std::vector<unsigned int> tp_buf_color;
+    static std::vector<unsigned int> tp_buf_texcoord;
+    static std::vector<unsigned int> tp_buf_index;
+    if (scene_on_gpu_id != scene_id) {
+        // Remove old GPU-cached scene, if any.
+        if (!tp_buf_vertex.empty()) {
+            glDeleteBuffers(tp_buf_vertex.size(), &(tp_buf_vertex[0]));
+            glDeleteBuffers(tp_buf_normal.size(), &(tp_buf_normal[0]));
+            if (!tp_buf_color.empty())
+                glDeleteBuffers(tp_buf_color.size(), &(tp_buf_color[0]));
+            if (!tp_buf_texcoord.empty())
+                glDeleteBuffers(tp_buf_texcoord.size(), &(tp_buf_texcoord[0]));
+            tp_buf_vertex.clear();
+            tp_buf_normal.clear();
+            tp_buf_color.clear();
+            tp_buf_texcoord.clear();
+        }
+        // Upload the new scene to the GPU.
+        tp_buf_vertex.resize(scene.size());
+        tp_buf_normal.resize(scene.size());
+        tp_buf_color.resize(scene.size());
+        tp_buf_texcoord.resize(scene.size());
+        tp_buf_index.resize(scene.size());
+        for (unsigned int i = 0; i < scene.size(); i++) {
+            const TrianglePatch& tp = scene[i];
+            if (tp.vertex_array.empty())
+                continue;
+            GLuint vertex_buf, normal_buf, color_buf, texcoord_buf, index_buf;
+            glGenBuffers(1, &vertex_buf);
+            glBindBuffer(GL_ARRAY_BUFFER, vertex_buf);
+            glBufferData(GL_ARRAY_BUFFER, tp.vertex_array.size() * sizeof(float), &(tp.vertex_array[0]), GL_STATIC_DRAW);
+            tp_buf_vertex[i] = vertex_buf;
+            assert(!tp.normal_array.empty());
+            glGenBuffers(1, &normal_buf);
+            glBindBuffer(GL_ARRAY_BUFFER, normal_buf);
+            glBufferData(GL_ARRAY_BUFFER, tp.normal_array.size() * sizeof(float), &(tp.normal_array[0]), GL_STATIC_DRAW);
+            tp_buf_normal[i] = normal_buf;
+            if (!tp.color_array.empty()) {
+                glGenBuffers(1, &color_buf);
+                glBindBuffer(GL_ARRAY_BUFFER, color_buf);
+                glBufferData(GL_ARRAY_BUFFER, tp.color_array.size() * sizeof(float), &(tp.color_array[0]), GL_STATIC_DRAW);
+                tp_buf_color[i] = color_buf;
+            }
+            if (!tp.texcoord_array.empty()) {
+                glGenBuffers(1, &texcoord_buf);
+                glBindBuffer(GL_ARRAY_BUFFER, texcoord_buf);
+                glBufferData(GL_ARRAY_BUFFER, tp.texcoord_array.size() * sizeof(float), &(tp.texcoord_array[0]), GL_STATIC_DRAW);
+                tp_buf_texcoord[i] = texcoord_buf;
+            }
+            glGenBuffers(1, &index_buf);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buf);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, tp.index_array.size() * sizeof(unsigned int), &(tp.index_array[0]), GL_STATIC_DRAW);
+            tp_buf_index[i] = index_buf;
+        }
+        scene_on_gpu_id = scene_id;
+    }
     // Now render.
     // This uses simple vertex buffer rendering.
     // TODO: Performance optimization: cache the data on the GPU; do not transfer it every frame.
@@ -184,28 +244,32 @@ void SimWidget::render_oversampled_map(const std::vector<TrianglePatch>& scene, 
         if (tp.vertex_array.empty())
             continue;
         glLoadMatrixf(tp.transformation);
+        glBindBuffer(GL_ARRAY_BUFFER, tp_buf_vertex[i]);
         glEnableClientState(GL_VERTEX_ARRAY);
-        glVertexPointer(3, GL_FLOAT, 0, &(tp.vertex_array[0]));
-        assert(!tp.normal_array.empty());
+        glVertexPointer(3, GL_FLOAT, 0, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, tp_buf_normal[i]);
         glEnableClientState(GL_NORMAL_ARRAY);
-        glNormalPointer(GL_FLOAT, 0, &(tp.normal_array[0]));
+        glNormalPointer(GL_FLOAT, 0, 0);
         if (tp.color_array.empty()) {
             glDisableClientState(GL_COLOR_ARRAY);
         } else {
+            glBindBuffer(GL_ARRAY_BUFFER, tp_buf_color[i]);
             glEnableClientState(GL_COLOR_ARRAY);
-            glColorPointer(4, GL_FLOAT, 0, &(tp.color_array[0]));
+            glColorPointer(4, GL_FLOAT, 0, 0);
         }
         if (tp.texcoord_array.empty()) {
             glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         } else {
+            glBindBuffer(GL_ARRAY_BUFFER, tp_buf_texcoord[i]);
             glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-            glTexCoordPointer(2, GL_FLOAT, 0, &(tp.texcoord_array[0]));
+            glTexCoordPointer(2, GL_FLOAT, 0, 0);
         }
-        glDrawElements(GL_TRIANGLES, tp.index_array.size(), GL_UNSIGNED_INT, &(tp.index_array[0]));
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tp_buf_index[i]);
+        glDrawElements(GL_TRIANGLES, tp.index_array.size(), GL_UNSIGNED_INT, 0);
     }
 }
 
-void SimWidget::render_map(const std::vector<TrianglePatch>& scene, int phase_index)
+void SimWidget::render_map(int scene_id, const std::vector<TrianglePatch>& scene, int phase_index)
 {
     makeCurrent();
     glClearColor(0.0, 0.0, 0.0, 0.0);
@@ -242,7 +306,7 @@ void SimWidget::render_map(const std::vector<TrianglePatch>& scene, int phase_in
     glEnable(GL_CULL_FACE);
 
     // Now render the scene into the oversampled map
-    render_oversampled_map(scene, phase_index);
+    render_oversampled_map(scene_id, scene, phase_index);
 
     // Reduce spatially oversampled map to sensor resolution
     if (_pixel_map_w != _simulator.pixel_width || _pixel_map_h != _simulator.pixel_height
