@@ -624,7 +624,8 @@ void MainWindow::export_frame(const std::string& dirname, int frameno)
     // Restore original locale
     setlocale(LC_NUMERIC, locbak);
 #endif
-    std::string result = f_rd0.result();
+    std::string result;
+    if (result.empty()) result = f_rd0.result();
     if (result.empty()) result = f_rd1.result();
     if (result.empty()) result = f_rd2.result();
     if (result.empty()) result = f_rd3.result();
