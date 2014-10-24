@@ -1181,7 +1181,7 @@ void MainWindow::target_use_modelfile()
 {
     QString filename = QFileDialog::getOpenFileName(this, "Read model file",
             _settings->value("Session/directory", QDir::currentPath()).toString(),
-            tr("Target models (*.obj, *.ply)"));
+            tr("Target models (*.obj *.ply)"));
     if (filename.isEmpty())
         return;
     _settings->setValue("Session/directory", QFileInfo(filename).path());
