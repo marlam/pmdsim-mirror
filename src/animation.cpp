@@ -38,32 +38,42 @@ static void copy_keyframe(const Animation::Keyframe& keyframe, float pos[3], flo
 
 static void slerp(const float quat_a[4], const float quat_b[4], float alpha, float quat[4])
 {
+    /* FROM http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/ */
     const float* qa = quat_a;
     float qb[4] = { quat_b[0], quat_b[1], quat_b[2], quat_b[3] };
-
-    float cos_w = qa[0] * qb[0] + qa[1] * qb[1] + qa[2] * qb[2] + qa[3] + qb[3];
-    if (cos_w < 0.0f) {
-        cos_w = -cos_w;
+    // Calculate angle between them.
+    float cos_half_angle = qa[0] * qb[0] + qa[1] * qb[1] + qa[2] * qb[2] + qa[3] * qb[3];
+    if (cos_half_angle < 0.0f) {
         qb[0] = -qb[0];
         qb[1] = -qb[1];
         qb[2] = -qb[2];
         qb[3] = -qb[3];
+        cos_half_angle = -cos_half_angle;
     }
-    float t_a, t_b;
-    if (1.0f - cos_w > epsilon) {
-        float w = std::acos(cos_w);   // 0 <= w <= pi
-        float sin_w = std::sin(w);
-        t_a = std::sin(alpha * w) / sin_w;
-        t_b = std::sin((1.0f - alpha) * w) / sin_w;
-    } else {
-        // the difference is very small, so use simple linear interpolation
-        t_a = alpha;
-        t_b = 1.0f - alpha;
+    if (abs(cos_half_angle) >= 1.0) {
+        // angle is zero => rotations are identical
+        quat[0] = qa[0];
+        quat[1] = qa[1];
+        quat[2] = qa[2];
+        quat[3] = qa[3];
+        return;
     }
-    quat[0] = t_a * qa[0] + t_b * qb[0];
-    quat[1] = t_a * qa[1] + t_b * qb[1];
-    quat[2] = t_a * qa[2] + t_b * qb[2];
-    quat[3] = t_a * qa[3] + t_b * qb[3];
+    float half_angle = std::acos(cos_half_angle);
+    float sin_half_angle = std::sqrt(1.0f - cos_half_angle * cos_half_angle);
+    if (std::abs(sin_half_angle) < 0.001f){
+        // angle is 180 degrees => result is not clear
+        quat[0] = (qa[0] * 0.5f + qb[0] * 0.5f);
+        quat[1] = (qa[1] * 0.5f + qb[1] * 0.5f);
+        quat[2] = (qa[2] * 0.5f + qb[2] * 0.5f);
+        quat[3] = (qa[3] * 0.5f + qb[3] * 0.5f);
+        return;
+    }
+    float tmp_a = std::sin(alpha * half_angle) / sin_half_angle;
+    float tmp_b = std::sin((1.0f - alpha) * half_angle) / sin_half_angle;
+    quat[0] = (qa[0] * tmp_a + qb[0] * tmp_b);
+    quat[1] = (qa[1] * tmp_a + qb[1] * tmp_b);
+    quat[2] = (qa[2] * tmp_a + qb[2] * tmp_b);
+    quat[3] = (qa[3] * tmp_a + qb[3] * tmp_b);
 }
 
 void Animation::interpolate(long long t, float pos[3], float rot[4])
