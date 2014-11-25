@@ -676,7 +676,7 @@ void MainWindow::export_animation(const std::string& dirname, bool show_progress
     catch (std::exception& e) {
         if (show_progress)
             progress.setValue(1000);
-        throw e;
+        throw;
     }
     if (show_progress)
         progress.setValue(1000);
