@@ -114,7 +114,7 @@ if(DOXYGEN_FOUND)
     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/doc"
     DEPENDS "${CMAKE_SOURCE_DIR}/doc/doxyfile.in"
             "${CMAKE_SOURCE_DIR}/doc/animation-example.txt"
-            "${CMAKE_SOURCE_DIR}/src/README"
+            "${CMAKE_SOURCE_DIR}/src/README.txt"
             "${CMAKE_SOURCE_DIR}/src/simulator.h"
             "${CMAKE_SOURCE_DIR}/src/target.h"
             "${CMAKE_SOURCE_DIR}/src/animation.h"
