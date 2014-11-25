@@ -567,41 +567,44 @@ public:
                 assert(node.getNumDrawables() == 1);
                 // Get vertex data. We expect index triangles!
                 const osg::Drawable* drawable = node.getDrawable(0);
+                assert(drawable);
                 const osg::Geometry* geom = dynamic_cast<const osg::Geometry*>(drawable);
-                const osg::Array* vertex_array = geom->getVertexArray();
-                const osg::Array* normal_array = geom->getNormalArray();
-                const osg::Array* color_array = geom->getColorArray();
-                const osg::Array* texcoord_array = geom->getTexCoordArray(0);
-                // Sanity check.
-                assert(vertex_array);
-                assert(vertex_array->getType() == osg::Array::Vec3ArrayType);
-                assert(normal_array);
-                assert(normal_array->getType() == osg::Array::Vec3ArrayType);
-                assert(normal_array->getNumElements() == vertex_array->getNumElements());
-                assert(!color_array || color_array->getType() == osg::Array::Vec4ArrayType);
-                assert(!color_array || color_array->getNumElements() == vertex_array->getNumElements());
-                assert(!texcoord_array || texcoord_array->getType() == osg::Array::Vec2ArrayType);
-                assert(!texcoord_array || texcoord_array->getNumElements() == vertex_array->getNumElements());
-                // Copy the vertex and attribute data to our triangle patches
-                _scene->back().vertex_array.resize(3 * vertex_array->getNumElements());
-                std::memcpy(&(_scene->back().vertex_array[0]), vertex_array->getDataPointer(), sizeof(float) * 3 * vertex_array->getNumElements());
-                _scene->back().normal_array.resize(3 * normal_array->getNumElements());
-                std::memcpy(&(_scene->back().normal_array[0]), normal_array->getDataPointer(), sizeof(float) * 3 * normal_array->getNumElements());
-                if (color_array) {
-                    _scene->back().color_array.resize(4 * color_array->getNumElements());
-                    std::memcpy(&(_scene->back().color_array[0]), color_array->getDataPointer(), sizeof(float) * 4 * color_array->getNumElements());
+                if (geom) {
+                    const osg::Array* vertex_array = geom->getVertexArray();
+                    const osg::Array* normal_array = geom->getNormalArray();
+                    const osg::Array* color_array = geom->getColorArray();
+                    const osg::Array* texcoord_array = geom->getTexCoordArray(0);
+                    // Sanity check.
+                    assert(vertex_array);
+                    assert(vertex_array->getType() == osg::Array::Vec3ArrayType);
+                    assert(normal_array);
+                    assert(normal_array->getType() == osg::Array::Vec3ArrayType);
+                    assert(normal_array->getNumElements() == vertex_array->getNumElements());
+                    assert(!color_array || color_array->getType() == osg::Array::Vec4ArrayType);
+                    assert(!color_array || color_array->getNumElements() == vertex_array->getNumElements());
+                    assert(!texcoord_array || texcoord_array->getType() == osg::Array::Vec2ArrayType);
+                    assert(!texcoord_array || texcoord_array->getNumElements() == vertex_array->getNumElements());
+                    // Copy the vertex and attribute data to our triangle patches
+                    _scene->back().vertex_array.resize(3 * vertex_array->getNumElements());
+                    std::memcpy(&(_scene->back().vertex_array[0]), vertex_array->getDataPointer(), sizeof(float) * 3 * vertex_array->getNumElements());
+                    _scene->back().normal_array.resize(3 * normal_array->getNumElements());
+                    std::memcpy(&(_scene->back().normal_array[0]), normal_array->getDataPointer(), sizeof(float) * 3 * normal_array->getNumElements());
+                    if (color_array) {
+                        _scene->back().color_array.resize(4 * color_array->getNumElements());
+                        std::memcpy(&(_scene->back().color_array[0]), color_array->getDataPointer(), sizeof(float) * 4 * color_array->getNumElements());
+                    }
+                    if (texcoord_array) {
+                        _scene->back().texcoord_array.resize(2 * texcoord_array->getNumElements());
+                        std::memcpy(&(_scene->back().texcoord_array[0]), texcoord_array->getDataPointer(), sizeof(float) * 2 * texcoord_array->getNumElements());
+                    }
+                    // Now get the correct sequence of indices. We need a visitor just for that...
+                    for (unsigned int i = 0; i < geom->getNumPrimitiveSets(); i++) {
+                        const osg::PrimitiveSet* ps = geom->getPrimitiveSet(i);
+                        IndexVisitor iv(&_scene->back());
+                        ps->accept(iv);
+                    }
+                    // TODO: get texture: _scene->back().texture = ...;
                 }
-                if (texcoord_array) {
-                    _scene->back().texcoord_array.resize(2 * color_array->getNumElements());
-                    std::memcpy(&(_scene->back().texcoord_array[0]), texcoord_array->getDataPointer(), sizeof(float) * 2 * texcoord_array->getNumElements());
-                }
-                // Now get the correct sequence of indices. We need a visitor just for that...
-                for (unsigned int i = 0; i < geom->getNumPrimitiveSets(); i++) {
-                    const osg::PrimitiveSet* ps = geom->getPrimitiveSet(i);
-                    IndexVisitor iv(&_scene->back());
-                    ps->accept(iv);
-                }
-                // TODO: get texture: _scene->back().texture = ...;
             }
         }
         traverse(node);
