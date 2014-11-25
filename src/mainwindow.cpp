@@ -603,6 +603,10 @@ void MainWindow::export_frame(const std::string& dirname, int frameno)
     QFuture<std::string> f_rd1 = QtConcurrent::run(export_worker, base + "raw-depth-1" + ext, _simulator, false, 4, &_export_phase1[2]);
     QFuture<std::string> f_rd2 = QtConcurrent::run(export_worker, base + "raw-depth-2" + ext, _simulator, false, 4, &_export_phase2[2]);
     QFuture<std::string> f_rd3 = QtConcurrent::run(export_worker, base + "raw-depth-3" + ext, _simulator, false, 4, &_export_phase3[2]);
+    QFuture<std::string> f_rc0 = QtConcurrent::run(export_worker, base + "raw-coords-0" + ext, _simulator, true, 4, &_export_phase0[2]);
+    QFuture<std::string> f_rc1 = QtConcurrent::run(export_worker, base + "raw-coords-1" + ext, _simulator, true, 4, &_export_phase1[2]);
+    QFuture<std::string> f_rc2 = QtConcurrent::run(export_worker, base + "raw-coords-2" + ext, _simulator, true, 4, &_export_phase2[2]);
+    QFuture<std::string> f_rc3 = QtConcurrent::run(export_worker, base + "raw-coords-3" + ext, _simulator, true, 4, &_export_phase3[2]);
     QFuture<std::string> f_re0 = QtConcurrent::run(export_worker, base + "raw-energy-0" + ext, _simulator, false, 4, &_export_phase0[3]);
     QFuture<std::string> f_re1 = QtConcurrent::run(export_worker, base + "raw-energy-1" + ext, _simulator, false, 4, &_export_phase1[3]);
     QFuture<std::string> f_re2 = QtConcurrent::run(export_worker, base + "raw-energy-2" + ext, _simulator, false, 4, &_export_phase2[3]);
@@ -618,7 +622,7 @@ void MainWindow::export_frame(const std::string& dirname, int frameno)
     QFuture<std::string> f_sd = QtConcurrent::run(export_worker, base + "sim-depth" + ext, _simulator, false, 3, &_export_result[0]);
     QFuture<std::string> f_sa = QtConcurrent::run(export_worker, base + "sim-amplitude" + ext, _simulator, false, 3, &_export_result[1]);
     QFuture<std::string> f_si = QtConcurrent::run(export_worker, base + "sim-intensity" + ext, _simulator, false, 3, &_export_result[2]);
-    QFuture<std::string> f_sc = QtConcurrent::run(export_worker, base + "sim-coords" + ext, _simulator, true, 4, &_export_phase0[2]);
+    QFuture<std::string> f_sc = QtConcurrent::run(export_worker, base + "sim-coords" + ext, _simulator, true, 3, &_export_result[0]);
 #ifdef HAVE_GTA
 #else
     // Restore original locale
@@ -629,6 +633,10 @@ void MainWindow::export_frame(const std::string& dirname, int frameno)
     if (result.empty()) result = f_rd1.result();
     if (result.empty()) result = f_rd2.result();
     if (result.empty()) result = f_rd3.result();
+    if (result.empty()) result = f_rc0.result();
+    if (result.empty()) result = f_rc1.result();
+    if (result.empty()) result = f_rc2.result();
+    if (result.empty()) result = f_rc3.result();
     if (result.empty()) result = f_re0.result();
     if (result.empty()) result = f_re1.result();
     if (result.empty()) result = f_re2.result();
