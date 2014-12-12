@@ -50,7 +50,7 @@ static void slerp(const float quat_a[4], const float quat_b[4], float alpha, flo
         qb[3] = -qb[3];
         cos_half_angle = -cos_half_angle;
     }
-    if (abs(cos_half_angle) >= 1.0) {
+    if (std::abs(cos_half_angle) >= 1.0) {
         // angle is zero => rotations are identical
         quat[0] = qa[0];
         quat[1] = qa[1];
