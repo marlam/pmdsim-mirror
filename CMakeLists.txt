@@ -1,4 +1,4 @@
-# Copyright (C) 2012, 2013, 2014
+# Copyright (C) 2012, 2013, 2014, 2017
 # Computer Graphics Group, University of Siegen.
 # http://www.cg.informatik.uni-siegen.de/
 # All rights reserved.
@@ -101,7 +101,7 @@ target_link_libraries(pmdsim
   ${OPENSCENEGRAPH_PLUGIN_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES}
   ${GLEW_LIBRARIES} ${OPENGL_LIBRARIES})
 install(TARGETS pmdsim RUNTIME DESTINATION bin)
-install(FILES doc/animation-example.txt DESTINATION doc)
+install(FILES doc/animation-example.txt DESTINATION share/doc/pmdsim)
 
 # Documentation (if doxygen is available)
 find_package(Doxygen)
@@ -121,7 +121,7 @@ if(DOXYGEN_FOUND)
     COMMENT "Generating API documentation with Doxygen" VERBATIM
   )
   add_custom_target(doc ALL DEPENDS "${CMAKE_BINARY_DIR}/doc/html/index.html")
-  install(DIRECTORY "${CMAKE_BINARY_DIR}/doc/html" DESTINATION doc)
+  install(DIRECTORY "${CMAKE_BINARY_DIR}/doc/html" DESTINATION share/doc/pmdsim)
 endif()
 
 # Extra target: 'make dist' for making distribution tarballs
