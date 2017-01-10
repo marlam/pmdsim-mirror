@@ -43,7 +43,7 @@
  *
  * The build system is based on <a href="http://www.cmake.org/">CMake</a>.
  * Required libraries are <a href="http://qt-project.org/">Qt</a> version 4,
- * <a href="http://glew.sourceforge.net/">GLEW</a> (MX variant), and
+ * <a href="http://glew.sourceforge.net/">GLEW</a>, and
  * <a href="http://www.openscenegraph.com/">OpenSceneGraph</a>.
  * If <a href="http://www.stack.nl/~dimitri/doxygen/">Doxygen</a> is available,
  * then HTML documentation will be generated as part of the build process.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2014
+ * Copyright (C) 2012, 2013, 2014, 2017
  * Computer Graphics Group, University of Siegen, Germany.
  * http://www.cg.informatik.uni-siegen.de/
  * All rights reserved.
@@ -25,7 +25,7 @@ GLWidget::GLWidget(QGLWidget* sharing_widget) : QGLWidget(NULL, sharing_widget)
         std::exit(1);
     }
     makeCurrent();
-    glewContextInit(&_glewctx);
+    glewInit();
 }
 
 void GLWidget::update_simulator(const Simulator& simulator)

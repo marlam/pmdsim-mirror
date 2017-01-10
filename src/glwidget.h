@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2014
+ * Copyright (C) 2012, 2013, 2014, 2017
  * Computer Graphics Group, University of Siegen, Germany.
  * http://www.cg.informatik.uni-siegen.de/
  * All rights reserved.
@@ -22,16 +22,8 @@ class GLWidget : public QGLWidget
 {
     Q_OBJECT
 
-private:
-    GLEWContext _glewctx;
-
 protected:
     Simulator _simulator;
-
-    GLEWContext* glewGetContext()
-    {
-        return &_glewctx;
-    }
 
 public:
     GLWidget(QGLWidget* sharing_widget);

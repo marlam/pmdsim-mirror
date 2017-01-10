@@ -35,8 +35,7 @@ option(STATIC_BUILD "Build statically linked binary (useful for MXE)" OFF)
 
 # Find OpenGL and GLEW.
 find_package(OpenGL REQUIRED)
-find_package(GLEWMX REQUIRED)
-add_definitions(-DGLEW_MX)
+find_package(GLEW REQUIRED)
 if(STATIC_BUILD)
   add_definitions(-DGLEW_STATIC)
 endif()
@@ -96,11 +95,11 @@ add_executable(pmdsim
   src/animwidget.h src/animwidget.cpp
   src/mainwindow.h src/mainwindow.cpp)
 include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/src
-  ${GTA_INCLUDE_DIRS} ${QT_INCLUDE_DIRS} ${OPENSCENEGRAPH_INCLUDE_DIRS} ${GLEWMX_INCLUDE_DIRS})
+  ${GTA_INCLUDE_DIRS} ${QT_INCLUDE_DIRS} ${OPENSCENEGRAPH_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
 target_link_libraries(pmdsim
   ${GTA_LIBRARIES} ${QT_LIBRARIES}
   ${OPENSCENEGRAPH_PLUGIN_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES}
-  ${GLEWMX_LIBRARIES} ${OPENGL_LIBRARIES})
+  ${GLEW_LIBRARIES} ${OPENGL_LIBRARIES})
 install(TARGETS pmdsim RUNTIME DESTINATION bin)
 install(FILES doc/animation-example.txt DESTINATION doc)
 
