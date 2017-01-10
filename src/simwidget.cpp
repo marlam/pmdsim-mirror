@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2014
+ * Copyright (C) 2012, 2013, 2014, 2017
  * Computer Graphics Group, University of Siegen, Germany.
  * http://www.cg.informatik.uni-siegen.de/
  * All rights reserved.
@@ -7,6 +7,7 @@
  */
 
 #include <cassert>
+#include <cmath>
 #include <stdexcept>
 #include <system_error>
 
