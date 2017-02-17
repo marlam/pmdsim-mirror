@@ -53,7 +53,7 @@
  *
  * On a current Debian or Ubuntu system, the following packages should be
  * installed to build PMDSim: g++ make cmake cmake-curses-gui libqt4-dev
- * libglewmx-dev libopenscenegraph-dev doxygen.
+ * libglew-dev libopenscenegraph-dev doxygen.
  *
  * \code
  * $ tar xvf pmdsim-0.1.tar.xz
