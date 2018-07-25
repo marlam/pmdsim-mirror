@@ -22,13 +22,10 @@ The build system is based on [CMake](http://www.cmake.org/).
 You need the following libraries:
 - [Qt](https://www.qt.io/) version 4 (version 5 is not supported)
 - [GLEW](http://glew.sourceforge.net/)
-- [OpenSceneGraph](http://www.openscenegraph.com/)
+- [OpenSceneGraph](http://www.openscenegraph.com/) with the OSG/Qt module
+
 If [Doxygen](http://www.stack.nl/~dimitri/doxygen/) is available, the HTML
 documentation will be generated as well.
-
-Note for Windows users: Visual Studio 10 was tested. The precompiled
-OpenSceneGraph packages lack support for the OSG/Qt module, so it might be
-necessary to recompile OpenSceneGraph after installing Qt.
 
 ## Using
 
