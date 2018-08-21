@@ -15,6 +15,8 @@ in collaboration with [pmdtec](http://pmdtec.com).
 PMDSim is free software, licensed under the terms of the GNU GPL version 3 or
 later.
 
+**Please note that PMDSim is superseded by [CamSim](https://gitlab.marlam.de/marlam/camsim).**
+
 ## Building 
 
 This software should build and run on any operating system.
