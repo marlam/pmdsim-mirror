@@ -32,7 +32,7 @@ documentation will be generated as well.
 ## Using
 
 Starting the program gives you this screen:
-![GUI screen shot](https://gitlab.marlam.de/marlam/pmdsim/raw/master/doc/pmdsim-screenshot.png)
+![GUI screen shot](https://marlam.de/pmdsim/pmdsim-screenshot.png)
 
 In the top left view, you see the current scene, consisting of a *target*
 (default: a Siemens star) and a *background* (default: nothing). You can use
